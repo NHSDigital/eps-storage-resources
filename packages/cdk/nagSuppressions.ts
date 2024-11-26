@@ -6,7 +6,7 @@ import {NagPackSuppression, NagSuppressions} from "cdk-nag"
 export const nagSuppressions = (stack: Stack) => {
   safeAddNagSuppression(
     stack,
-    "/StorageResourcesStack/TableReadManagedPolicy/Resource",
+    "/StorageResourcesStack/DynamoDB/TableReadManagedPolicy/Resource",
     [
       {
         id: "AwsSolutions-IAM5",
@@ -17,7 +17,7 @@ export const nagSuppressions = (stack: Stack) => {
 
   safeAddNagSuppression(
     stack,
-    "/StorageResourcesStack/TableWriteManagedPolicy/Resource",
+    "/StorageResourcesStack/DynamoDB/TableWriteManagedPolicy/Resource",
     [
       {
         id: "AwsSolutions-IAM5",
