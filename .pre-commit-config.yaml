@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v5.0.0
     hooks:
       - id: check-merge-conflict
         name: Check for merge conflict strings
@@ -17,7 +17,7 @@ repos:
         files: ^(.github)
 
   - repo: https://github.com/pycqa/flake8
-    rev: "7ef0350a439c93166bc8ba89fcc3de6a9a664e6c" # release 6.1.0
+    rev: "7.1.1" # release 6.1.0
     hooks:
       - id: flake8
 
