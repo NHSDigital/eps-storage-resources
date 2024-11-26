@@ -50,7 +50,7 @@ jobs:
         with:
           aws-region: eu-west-2
           role-to-assume: ${{ secrets.CDK_PULL_IMAGE_ROLE }}
-          role-session-name: prescription-clinical-tracker-ui-pull-image
+          role-session-name: eps-storage-resources-pull-image
 
       - name: build_artifact download
         uses: actions/download-artifact@v4
@@ -82,7 +82,7 @@ jobs:
         with:
           aws-region: eu-west-2
           role-to-assume: ${{ secrets.CLOUD_FORMATION_DEPLOY_ROLE }}
-          role-session-name: prescription-clinical-tracker-ui-deployment
+          role-session-name: eps-storage-resources-deployment
           output-credentials: true
   
       - name: fix cdk.json for deployment
