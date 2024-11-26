@@ -62,3 +62,10 @@ aws-login:
 
 cfn-guard:
 	./scripts/run_cfn_guard.sh
+
+cdk-synth:
+	npx cdk synth \
+		--quiet \
+		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/StorageResourcesApp.ts" \
+		--context VERSION_NUMBER=undefined \
+		--context COMMIT_ID=undefined 
