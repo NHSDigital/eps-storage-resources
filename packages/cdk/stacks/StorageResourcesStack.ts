@@ -37,6 +37,7 @@ export class StorageResourcesStack extends Stack {
 
     // Context
     /* context values passed as --context cli arguments are passed as strings so coerce them to expected types*/
+    const allowAutoDeleteObjects: boolean = this.node.tryGetContext("allowAutoDeleteObjects")
 
     // Imports
     // Resources
@@ -79,7 +80,7 @@ export class StorageResourcesStack extends Stack {
         type: AttributeType.STRING
       },
       tableName: `${props.stackName}-datastore`,
-      removalPolicy: RemovalPolicy.DESTROY,
+      removalPolicy: allowAutoDeleteObjects ? RemovalPolicy.DESTROY: RemovalPolicy.RETAIN,
       pointInTimeRecovery: true,
       encryption: TableEncryptionV2.customerManagedKey(DatastoreKmsKey),
       billing: Billing.onDemand(),
