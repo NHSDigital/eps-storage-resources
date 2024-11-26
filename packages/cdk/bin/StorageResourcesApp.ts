@@ -8,6 +8,7 @@ const app = new App()
   - logRetentionInDays
 */
 
+const serviceName = app.node.tryGetContext("serviceName")
 const version = app.node.tryGetContext("VERSION_NUMBER")
 const commit = app.node.tryGetContext("COMMIT_ID")
 
@@ -22,6 +23,6 @@ new StorageResourcesStack(app, "StorageResourcesStack", {
   env: {
     region: "eu-west-2"
   },
-  stackName: "storage-resources",
+  stackName: `${serviceName}`,
   version: version
 })
