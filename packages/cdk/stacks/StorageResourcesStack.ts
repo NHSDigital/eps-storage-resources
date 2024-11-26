@@ -30,7 +30,6 @@ export interface StorageResourcesStackProps extends StackProps{
 
 /**
  * EPS Storage Resources
-
  */
 
 export class StorageResourcesStack extends Stack {
@@ -88,6 +87,7 @@ export class StorageResourcesStack extends Stack {
       timeToLiveAttribute: "expireAt"
     })
 
+    // global secondary indexes
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "nhsNumberDate",
       partitionKey: {
@@ -256,6 +256,7 @@ export class StorageResourcesStack extends Stack {
       ]
     })
 
+    // read table policy
     const tableReadManagedPolicy = new ManagedPolicy(this, "TableReadManagedPolicy", {
       statements: [
         new PolicyStatement({
@@ -275,6 +276,7 @@ export class StorageResourcesStack extends Stack {
       ]
     })
 
+    // write table policy
     const tableWriteManagedPolicy = new ManagedPolicy(this, "TableWriteManagedPolicy", {
       statements: [
         new PolicyStatement({

@@ -1,0 +1,4 @@
+token: ?"?\$\{\{\s*secrets\.GITHUB_TOKEN\s*\}\}"?
+github-token: ?"?\$\{\{\s*secrets\.GITHUB_TOKEN\s*\}\}"?
+id-token: write
+.*\.gitallowed.*
