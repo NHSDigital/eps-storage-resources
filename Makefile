@@ -62,3 +62,31 @@ aws-login:
 
 cfn-guard:
 	./scripts/run_cfn_guard.sh
+
+cdk-synth:
+	npx cdk synth \
+		--quiet \
+		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/StorageResourcesApp.ts" \
+		--context VERSION_NUMBER=undefined \
+		--context COMMIT_ID=undefined 
+
+cdk-diff: guard-service_name
+	npx cdk diff \
+		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/StorageResourcesApp.ts" \
+		--context serviceName=$$service_name \
+		--context VERSION_NUMBER=$$VERSION_NUMBER \
+		--context COMMIT_ID=$$COMMIT_ID 
+
+cdk-watch: guard-service_name
+	REQUIRE_APPROVAL="$${REQUIRE_APPROVAL:-any-change}" && \
+	VERSION_NUMBER="$${VERSION_NUMBER:-undefined}" && \
+	COMMIT_ID="$${COMMIT_ID:-undefined}" && \
+		npx cdk deploy \
+		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/StorageResourcesApp.ts" \
+		--watch \
+		--all \
+		--ci true \
+		--require-approval $${REQUIRE_APPROVAL} \
+		--context serviceName=$$service_name \
+		--context VERSION_NUMBER=$$VERSION_NUMBER \
+		--context COMMIT_ID=$$COMMIT_ID
