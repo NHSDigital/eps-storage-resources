@@ -1,0 +1,135 @@
+name: merge to main workflow
+
+on:
+  push:
+    branches: [main]
+
+env:
+  BRANCH_NAME: ${{ github.event.ref.BRANCH_NAME }}
+
+jobs:
+  quality_checks:
+    uses: NHSDigital/eps-workflow-quality-checks/.github/workflows/quality-checks.yml@v3.0.0
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  get_commit_id:
+    runs-on: ubuntu-latest
+    outputs:
+      commit_id: ${{ steps.commit_id.outputs.commit_id }}
+    steps:
+      - name: Get Commit ID
+        id: commit_id
+        run: |
+          echo "commit_id=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+
+  tag_release:
+    needs: quality_checks
+    runs-on: ubuntu-latest
+    outputs:
+      version_tag: ${{ steps.output_version_tag.outputs.VERSION_TAG }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH_NAME }}
+          fetch-depth: 0
+
+      # using git commit sha for version of action to ensure we have stable version
+      - name: Install asdf
+        uses: asdf-vm/actions/setup@05e0d2ed97b598bfce82fd30daf324ae0c4570e6
+        with:
+          asdf_branch: v0.14.1
+  
+      - name: Cache asdf
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.asdf
+          key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
+
+      - name: Install asdf dependencies in .tool-versions
+        uses: asdf-vm/actions/install@05e0d2ed97b598bfce82fd30daf324ae0c4570e6
+        with:
+          asdf_branch: v0.14.1
+        env:
+          PYTHON_CONFIGURE_OPTS: --enable-shared
+
+      - name: Install Dependencies
+        run: make install
+
+      - name: Set VERSION_TAG env var to be short git SHA and get next tag varsion
+        id: output_version_tag
+        run: |
+          VERSION_TAG=$(git rev-parse --short HEAD)
+          npx semantic-release --dry-run > semantic-release-output.log
+          NEXT_VERSION=$(grep -i 'The next release version is' semantic-release-output.log | sed -E 's/.* ([[:digit:].]+)$/\1/')
+          if [ -z "${NEXT_VERSION}" ]
+          then
+            echo "Could not get next tag. Here is the log from semantic-release"
+            cat semantic-release-output.log
+            exit 1
+          fi
+          tagFormat=$(node -e "const config=require('./release.config.js'); console.log(config.tagFormat)")
+          if [ "${tagFormat}" = "null" ]
+          then
+            tagFormat="v\${version}"
+          fi
+          # disabling shellcheck as replace does not work
+          # shellcheck disable=SC2001
+          NEW_VERSION_TAG=$(echo "$tagFormat" | sed "s/\${version}/$NEXT_VERSION/")
+          echo "## VERSION TAG : ${VERSION_TAG}" >> "$GITHUB_STEP_SUMMARY"
+          echo "## NEXT TAG WILL BE : ${NEW_VERSION_TAG}" >> "$GITHUB_STEP_SUMMARY"
+          echo "VERSION_TAG=${VERSION_TAG}" >> "$GITHUB_OUTPUT"
+          echo "VERSION_TAG=${VERSION_TAG}" >> "$GITHUB_ENV"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+  # package_code:
+  #   needs: [tag_release, get_commit_id]
+  #   uses: ./.github/workflows/cdk_package_code.yml
+  #   with:
+  #     VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
+  #     COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
+
+  # release_dev:
+  #   needs: [tag_release, package_code, get_commit_id]
+  #   uses: ./.github/workflows/release_all_stacks.yml
+  #   with:
+  #     SERVICE_NAME: cpt-ui
+  #     TARGET_ENVIRONMENT: dev
+  #     VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
+  #     COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
+  #   secrets:
+  #     CDK_PULL_IMAGE_ROLE: ${{ secrets.DEV_CDK_PULL_IMAGE_ROLE }}
+  #     CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.DEV_CLOUD_FORMATION_DEPLOY_ROLE }}
+
+  # create_release_notes:
+  #   needs: [tag_release, package_code, get_commit_id, release_dev]
+  #   uses: ./.github/workflows/create_release_notes.yml
+  #   with:
+  #     VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
+  #     CREATE_INT_RELEASE_NOTES: true
+  #     CREATE_INT_RC_RELEASE_NOTES: false
+  #     CREATE_PROD_RELEASE_NOTES: true
+  #     MARK_JIRA_RELEASED: false
+  #   secrets:
+  #     DEV_CLOUD_FORMATION_EXECUTE_LAMBDA_ROLE: ${{ secrets.DEV_CLOUD_FORMATION_EXECUTE_LAMBDA_ROLE }}
+  #     DEV_CLOUD_FORMATION_CHECK_VERSION_ROLE: ${{ secrets.DEV_CLOUD_FORMATION_CHECK_VERSION_ROLE }}
+  #     INT_CLOUD_FORMATION_CHECK_VERSION_ROLE: ${{ secrets.INT_CLOUD_FORMATION_CHECK_VERSION_ROLE }}
+  #     PROD_CLOUD_FORMATION_CHECK_VERSION_ROLE: ${{ secrets.PROD_CLOUD_FORMATION_CHECK_VERSION_ROLE }}
+
+
+  # release_qa:
+  #   needs: [tag_release, release_dev, package_code, get_commit_id]
+  #   uses: ./.github/workflows/release_all_stacks.yml
+  #   with:
+  #     SERVICE_NAME: cpt-ui
+  #     TARGET_ENVIRONMENT: qa
+  #     VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
+  #     COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
+  #   secrets:
+  #     CDK_PULL_IMAGE_ROLE: ${{ secrets.QA_CDK_PULL_IMAGE_ROLE }}
+  #     CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.QA_CLOUD_FORMATION_DEPLOY_ROLE }}
