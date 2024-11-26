@@ -1,5 +1,6 @@
 import {
   App,
+  CfnOutput,
   Duration,
   RemovalPolicy,
   Stack,
@@ -13,11 +14,9 @@ import {
   TableV2
 } from "aws-cdk-lib/aws-dynamodb"
 import {
-  AccountRootPrincipal,
   AnyPrincipal,
   Effect,
   ManagedPolicy,
-  PolicyDocument,
   PolicyStatement
 } from "aws-cdk-lib/aws-iam"
 import {Key} from "aws-cdk-lib/aws-kms"
@@ -297,6 +296,26 @@ export class StorageResourcesStack extends Stack {
     //Outputs
 
     //Exports
+    new CfnOutput(this, "tableWriteManagedPolicyArn", {
+      value: tableWriteManagedPolicy.managedPolicyArn,
+      exportName: `${props.stackName}:tableWriteManagedPolicy:Arn`
+    })
+    new CfnOutput(this, "tableReadManagedPolicyArn", {
+      value: tableReadManagedPolicy.managedPolicyArn,
+      exportName: `${props.stackName}:tableReadManagedPolicy:Arn`
+    })
+    new CfnOutput(this, "usePrescriptionsTableKmsKeyPolicyArn", {
+      value: usePrescriptionsTableKmsKeyPolicy.managedPolicyArn,
+      exportName: `${props.stackName}:usePrescriptionsTableKmsKeyPolicy:Arn`
+    })
+    new CfnOutput(this, "DatastoreTableArn", {
+      value: DatastoreTable.tableArn,
+      exportName: `${props.stackName}:DatastoreTable:Arn`
+    })
+    new CfnOutput(this, "DatastoreKmsKeyArn", {
+      value: DatastoreKmsKey.keyArn,
+      exportName: `${props.stackName}:DatastoreKmsKey:Arn`
+    })
     nagSuppressions(this)
   }
 }
