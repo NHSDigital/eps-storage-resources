@@ -1,0 +1,29 @@
+
+[project]
+python = "^3.12"
+
+[tool.poetry]
+name = "eps-storage-resources"
+version = "0.0.1-alpha"
+description = "EPS VPC Resources"
+license = "MIT"
+authors = [
+    "EPS"
+]
+readme = "README.md"
+repository = "https://github.com/NHSDigital/eps-storage-resources"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pytest = "^8.3.3"
+
+[tool.poetry.scripts]
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.0.1"
+pip-licenses = "^5.0.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
