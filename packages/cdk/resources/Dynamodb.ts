@@ -142,7 +142,7 @@ export class Dynamodb extends Construct {
       },
       sortKey: {
         name: "isReady",
-        type: AttributeType.STRING
+        type: AttributeType.NUMBER
       },
       projectionType: ProjectionType.INCLUDE,
       nonKeyAttributes: [
