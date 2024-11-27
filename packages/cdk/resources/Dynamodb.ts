@@ -1,7 +1,6 @@
 import {Construct} from "constructs"
 
 import {
-  AttributeType,
   Billing,
   ProjectionType,
   TableEncryptionV2,
@@ -15,29 +14,7 @@ import {
 } from "aws-cdk-lib/aws-iam"
 import {Key} from "aws-cdk-lib/aws-kms"
 import {Duration, RemovalPolicy} from "aws-cdk-lib"
-
-enum Attributes {
-  PRIMARY_KEY = "pk",
-  SORT_KEY = "sk",
-  NHS_NUMBER = "nhsNumber",
-  CREATION_DATETIME = "creationDatetime",
-  INDEXES = "indexes",
-  PRESCRIBER_ORG = "prescriberOrg",
-  DISPENSER_ORG = "dispenserOrg",
-  NOMINATED_PHARMACY = "nominatedPharmacy",
-  IS_READY = "isReady",
-  STATUS = "status",
-  CLAIM_IDS = "claimIds",
-  NEXT_ACTIVITY = "nextActivity",
-  NEXT_ACTIVITY_DATE = "nextActivityDate",
-  DOC_REF_TITLE = "docRefTitle",
-  STORE_TIME = "storeTime",
-  BACKSTOP_DELETE_DATE = "backstopDeleteDate",
-  PRESCRIPTION_ID = "prescriptionId",
-  SEQUENCE_NUMBER = "sequenceNumber",
-  SEQUENCE_NUMBER_NWSSP = "sequenceNumberNwssp",
-  EXPIRE_AT = "expireAt"
-}
+import {ATTRIBUTE_KEYS, AttributeNames} from "./attributes"
 
 export interface DynamodbProps {
   readonly stackName: string
@@ -89,170 +66,107 @@ export class Dynamodb extends Construct {
 
     // the table
     const DatastoreTable = new TableV2(this, "DatastoreTable", {
-      partitionKey: {
-        name: Attributes.PRIMARY_KEY,
-        type: AttributeType.STRING
-      },
-      sortKey: {
-        name: Attributes.SORT_KEY,
-        type: AttributeType.STRING
-      },
+      partitionKey: ATTRIBUTE_KEYS.PRIMARY_KEY,
+      sortKey: ATTRIBUTE_KEYS.SORT_KEY,
       tableName: `${props.stackName}-datastore`,
       removalPolicy: props.allowAutoDeleteObjects ? RemovalPolicy.DESTROY: RemovalPolicy.RETAIN,
       pointInTimeRecovery: true,
       encryption: TableEncryptionV2.customerManagedKey(DatastoreKmsKey),
       billing: Billing.onDemand(),
-      timeToLiveAttribute: Attributes.EXPIRE_AT
+      timeToLiveAttribute: AttributeNames.EXPIRE_AT
     })
 
     // global secondary indexes
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "nhsNumberDate",
-      partitionKey: {
-        name: Attributes.NHS_NUMBER,
-        type: AttributeType.STRING
-      },
-      sortKey: {
-        name: Attributes.CREATION_DATETIME,
-        type: AttributeType.STRING
-      },
+      partitionKey: ATTRIBUTE_KEYS.NHS_NUMBER,
+      sortKey: ATTRIBUTE_KEYS.CREATION_DATETIME,
       projectionType: ProjectionType.INCLUDE,
       nonKeyAttributes: [
-        Attributes.INDEXES,
-        Attributes.PRESCRIBER_ORG,
-        Attributes.DISPENSER_ORG
+        AttributeNames.INDEXES,
+        AttributeNames.PRESCRIBER_ORG,
+        AttributeNames.DISPENSER_ORG
       ]
     })
 
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "prescriberDate",
-      partitionKey: {
-        name: Attributes.PRESCRIBER_ORG,
-        type: AttributeType.STRING
-      },
-      sortKey: {
-        name: Attributes.CREATION_DATETIME,
-        type: AttributeType.STRING
-      },
+      partitionKey: ATTRIBUTE_KEYS.PRESCRIBER_ORG,
+      sortKey: ATTRIBUTE_KEYS.CREATION_DATETIME,
       projectionType: ProjectionType.INCLUDE,
       nonKeyAttributes: [
-        Attributes.INDEXES,
-        Attributes.DISPENSER_ORG
+        AttributeNames.INDEXES,
+        AttributeNames.DISPENSER_ORG
       ]
     })
 
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "dispenserDate",
-      partitionKey: {
-        name: Attributes.DISPENSER_ORG,
-        type: AttributeType.STRING
-      },
-      sortKey: {
-        name: Attributes.CREATION_DATETIME,
-        type: AttributeType.STRING
-      },
+      partitionKey: ATTRIBUTE_KEYS.DISPENSER_ORG,
+      sortKey: ATTRIBUTE_KEYS.CREATION_DATETIME,
       projectionType: ProjectionType.INCLUDE,
       nonKeyAttributes: [
-        Attributes.INDEXES
+        AttributeNames.INDEXES
       ]
     })
 
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "nominatedPharmacyStatus",
-      partitionKey: {
-        name: Attributes.NOMINATED_PHARMACY,
-        type: AttributeType.STRING
-      },
-      sortKey: {
-        name: Attributes.IS_READY,
-        type: AttributeType.NUMBER
-      },
+      partitionKey: ATTRIBUTE_KEYS.NOMINATED_PHARMACY,
+      sortKey: ATTRIBUTE_KEYS.IS_READY,
       projectionType: ProjectionType.INCLUDE,
       nonKeyAttributes: [
-        Attributes.STATUS,
-        Attributes.INDEXES
+        AttributeNames.STATUS,
+        AttributeNames.INDEXES
       ]
     })
 
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "claimId",
-      partitionKey: {
-        name: Attributes.SORT_KEY,
-        type: AttributeType.STRING
-      },
+      partitionKey: ATTRIBUTE_KEYS.SORT_KEY,
       projectionType: ProjectionType.INCLUDE,
       nonKeyAttributes: [
-        Attributes.CLAIM_IDS
+        AttributeNames.CLAIM_IDS
       ]
     })
 
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "nextActivityDate",
-      partitionKey: {
-        name: Attributes.NEXT_ACTIVITY,
-        type: AttributeType.STRING
-      },
-      sortKey: {
-        name: Attributes.NEXT_ACTIVITY_DATE,
-        type: AttributeType.STRING
-      },
+      partitionKey: ATTRIBUTE_KEYS.NEXT_ACTIVITY,
+      sortKey: ATTRIBUTE_KEYS.NEXT_ACTIVITY_DATE,
       projectionType: ProjectionType.KEYS_ONLY
     })
 
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "storeTimeDocRefTitle",
-      partitionKey: {
-        name: Attributes.DOC_REF_TITLE,
-        type: AttributeType.STRING
-      },
-      sortKey: {
-        name: Attributes.STORE_TIME,
-        type: AttributeType.STRING
-      },
+      partitionKey: ATTRIBUTE_KEYS.DOC_REF_TITLE,
+      sortKey: ATTRIBUTE_KEYS.STORE_TIME,
       projectionType: ProjectionType.KEYS_ONLY
     })
 
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "backstopDeleteDate",
-      partitionKey: {
-        name: Attributes.SORT_KEY,
-        type: AttributeType.STRING
-      },
-      sortKey: {
-        name: Attributes.BACKSTOP_DELETE_DATE,
-        type: AttributeType.STRING
-      },
+      partitionKey: ATTRIBUTE_KEYS.SORT_KEY,
+      sortKey: ATTRIBUTE_KEYS.BACKSTOP_DELETE_DATE,
       projectionType: ProjectionType.KEYS_ONLY
     })
 
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "prescriptionId",
-      partitionKey: {
-        name: Attributes.PRESCRIPTION_ID,
-        type: AttributeType.STRING
-      },
-      sortKey: {
-        name: Attributes.SORT_KEY,
-        type: AttributeType.STRING
-      },
+      partitionKey: ATTRIBUTE_KEYS.PRESCRIPTION_ID,
+      sortKey: ATTRIBUTE_KEYS.SORT_KEY,
       projectionType: ProjectionType.KEYS_ONLY
     })
 
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "claimIdSequenceNumber",
-      partitionKey: {
-        name: Attributes.SEQUENCE_NUMBER,
-        type: AttributeType.NUMBER
-      },
+      partitionKey: ATTRIBUTE_KEYS.SEQUENCE_NUMBER,
       projectionType: ProjectionType.KEYS_ONLY
     })
 
     DatastoreTable.addGlobalSecondaryIndex({
       indexName: "claimIdSequenceNumberNwssp",
-      partitionKey: {
-        name: Attributes.SEQUENCE_NUMBER_NWSSP,
-        type: AttributeType.NUMBER
-      },
+      partitionKey: ATTRIBUTE_KEYS.SEQUENCE_NUMBER_NWSSP,
       projectionType: ProjectionType.KEYS_ONLY
     })
 
