@@ -68,7 +68,7 @@ export class Dynamodb extends Construct {
     const DatastoreTable = new TableV2(this, "DatastoreTable", {
       partitionKey: ATTRIBUTE_KEYS.PRIMARY_KEY,
       sortKey: ATTRIBUTE_KEYS.SORT_KEY,
-      tableName: `${props.stackPrefix}-datastore`,
+      tableName: `${props.stackPrefix}`,
       removalPolicy: props.allowAutoDeleteObjects ? RemovalPolicy.DESTROY: RemovalPolicy.RETAIN,
       pointInTimeRecovery: true,
       encryption: TableEncryptionV2.customerManagedKey(DatastoreKmsKey),
