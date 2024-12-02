@@ -8,8 +8,8 @@ const app = new App()
   - logRetentionInDays
 */
 
-const serviceName = app.node.tryGetContext("serviceName")
-const environment = app.node.tryGetContext("environment")
+const serviceName = app.node.tryGetContext("SERVICE_NAME")
+const environment = app.node.tryGetContext("ENVIRONMENT")
 const stackPrefix = `nhse-${environment}-${serviceName}`
 
 const version = app.node.tryGetContext("VERSION_NUMBER")
