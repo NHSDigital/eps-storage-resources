@@ -17,7 +17,6 @@ import {
 import {Key} from "aws-cdk-lib/aws-kms"
 import {Duration, RemovalPolicy} from "aws-cdk-lib"
 import {ATTRIBUTE_KEYS, AttributeNames} from "./attributes"
-import assert from "assert"
 
 export interface DynamodbProps {
   readonly stackName: string
@@ -35,6 +34,7 @@ export class Dynamodb extends Construct {
   public readonly usePrescriptionsTableKmsKeyPolicy: ManagedPolicy
   public readonly tableWriteManagedPolicy: ManagedPolicy
   public readonly tableReadManagedPolicy: ManagedPolicy
+  public readonly tableResourceStatement: PolicyStatement
   public readonly DatastoreKmsKey: Key
   public readonly DatastoreTableRole: Role
 
@@ -90,8 +90,6 @@ export class Dynamodb extends Construct {
     })
     tableResourceStatement.addAnyPrincipal()
 
-    const tableResourceStatementValidationErrors = tableResourceStatement.validateForResourcePolicy()
-    assert(tableResourceStatementValidationErrors.length === 0)
     DatastoreTable.addToResourcePolicy(tableResourceStatement)
 
     // global secondary indexes
@@ -188,11 +186,6 @@ export class Dynamodb extends Construct {
       projectionType: ProjectionType.KEYS_ONLY
     })
 
-    const DatastoreTableRole = new Role(this, "DatastoreTableRole", {
-      assumedBy: new AccountPrincipal(props.account)
-    })
-    DatastoreTable.grantReadWriteData(DatastoreTableRole)
-
     // policy to use kms key
     const usePrescriptionsTableKmsKeyPolicy = new ManagedPolicy(this, "UsePrescriptionsTableKMSKeyPolicy", {
       statements: [
@@ -250,6 +243,13 @@ export class Dynamodb extends Construct {
       ]
     })
 
+    const DatastoreTableRole = new Role(this, "DatastoreTableRole", {
+      assumedBy: new AccountPrincipal(props.account)
+    })
+    DatastoreTableRole.addManagedPolicy(tableReadManagedPolicy)
+    DatastoreTableRole.addManagedPolicy(tableWriteManagedPolicy)
+    DatastoreTableRole.addManagedPolicy(usePrescriptionsTableKmsKeyPolicy)
+
     // Outputs
     this.DatastoreTable = DatastoreTable
     this.DatastoreKmsKey = DatastoreKmsKey
@@ -257,5 +257,6 @@ export class Dynamodb extends Construct {
     this.usePrescriptionsTableKmsKeyPolicy = usePrescriptionsTableKmsKeyPolicy
     this.tableWriteManagedPolicy = tableWriteManagedPolicy
     this.tableReadManagedPolicy = tableReadManagedPolicy
+    this.tableResourceStatement = tableResourceStatement
   }
 }
