@@ -67,18 +67,20 @@ cdk-synth:
 	npx cdk synth \
 		--quiet \
 		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/StorageResourcesApp.ts" \
+		--context SERVICE_NAME=undefined \
+		--context ENVIRONMENT=undefined \
 		--context VERSION_NUMBER=undefined \
 		--context COMMIT_ID=undefined 
 
-cdk-diff: guard-service_name guard-environment
+cdk-diff: guard-SERVICE_NAME guard-ENVIRONMENT
 	npx cdk diff \
 		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/StorageResourcesApp.ts" \
-		--context serviceName=$$service_name \
-		--context environment=$$ENVIRONMENT \
+		--context SERVICE_NAME=$$SERVICE_NAME \
+		--context ENVIRONMENT=$$ENVIRONMENT \
 		--context VERSION_NUMBER=$$VERSION_NUMBER \
 		--context COMMIT_ID=$$COMMIT_ID 
 
-cdk-watch: guard-service_name guard-environment
+cdk-watch: guard-SERVICE_NAME guard-ENVIRONMENT
 	REQUIRE_APPROVAL="$${REQUIRE_APPROVAL:-any-change}" && \
 	VERSION_NUMBER="$${VERSION_NUMBER:-undefined}" && \
 	COMMIT_ID="$${COMMIT_ID:-undefined}" && \
@@ -88,7 +90,7 @@ cdk-watch: guard-service_name guard-environment
 		--all \
 		--ci true \
 		--require-approval $${REQUIRE_APPROVAL} \
-		--context serviceName=$$service_name \
-		--context environment=$$ENVIRONMENT \
+		--context SERVICE_NAME=$$SERVICE_NAME \
+		--context ENVIRONMENT=$$ENVIRONMENT \
 		--context VERSION_NUMBER=$$VERSION_NUMBER \
 		--context COMMIT_ID=$$COMMIT_ID
