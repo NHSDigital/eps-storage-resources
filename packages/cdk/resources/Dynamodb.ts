@@ -15,6 +15,7 @@ import {
 import {Key} from "aws-cdk-lib/aws-kms"
 import {Duration, RemovalPolicy} from "aws-cdk-lib"
 import {ATTRIBUTE_KEYS, AttributeNames} from "./attributes"
+import assert from "assert"
 
 export interface DynamodbProps {
   readonly stackName: string
@@ -75,6 +76,20 @@ export class Dynamodb extends Construct {
       billing: Billing.onDemand(),
       timeToLiveAttribute: AttributeNames.EXPIRE_AT
     })
+
+    const tableResourceStatement = new PolicyStatement({
+      effect: Effect.DENY,
+      actions: ["*"],
+      resources: [
+        DatastoreTable.tableArn,
+        `${DatastoreTable.tableArn}/index/*`
+      ]
+    })
+    tableResourceStatement.addAnyPrincipal()
+
+    const tableResourceStatementValidationErrors = tableResourceStatement.validateForResourcePolicy()
+    assert(tableResourceStatementValidationErrors.length === 0)
+    DatastoreTable.addToResourcePolicy(tableResourceStatement)
 
     // global secondary indexes
     DatastoreTable.addGlobalSecondaryIndex({
