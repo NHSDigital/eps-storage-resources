@@ -6,7 +6,7 @@ import {NagPackSuppression, NagSuppressions} from "cdk-nag"
 export const nagSuppressions = (stack: Stack) => {
   safeAddNagSuppression(
     stack,
-    "/StorageResourcesStack/DynamoDB/TableReadManagedPolicy/Resource",
+    "/DynamoDB/TableReadManagedPolicy/Resource",
     [
       {
         id: "AwsSolutions-IAM5",
@@ -17,7 +17,7 @@ export const nagSuppressions = (stack: Stack) => {
 
   safeAddNagSuppression(
     stack,
-    "/StorageResourcesStack/DynamoDB/TableWriteManagedPolicy/Resource",
+    "/DynamoDB/TableWriteManagedPolicy/Resource",
     [
       {
         id: "AwsSolutions-IAM5",
@@ -30,10 +30,12 @@ export const nagSuppressions = (stack: Stack) => {
 
 const safeAddNagSuppression = (stack: Stack, path: string, suppressions: Array<NagPackSuppression>) => {
   try {
-    NagSuppressions.addResourceSuppressionsByPath(stack, path, suppressions)
+    const stack_id = stack.node.id
+    const full_path = `/${stack_id}${path}`
+    NagSuppressions.addResourceSuppressionsByPath(stack, full_path, suppressions)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch(err){
-    console.log(`Could not find path ${path}`)
+    console.log(`Could not find path ${path} in stack ${stack.node.id}`)
   }
 }
