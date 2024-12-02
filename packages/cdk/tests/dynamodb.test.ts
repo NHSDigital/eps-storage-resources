@@ -17,7 +17,6 @@ describe("dynamodb resources are valid", () => {
   let app: cdk.App
 
   beforeAll(() => {
-    // GIVEN
     app = new cdk.App()
 
     const props: StorageResourcesStackProps = {
@@ -26,7 +25,6 @@ describe("dynamodb resources are valid", () => {
     }
     stack = new StorageResourcesStack(app, "test", props)
 
-    // WHEN
     Aspects.of(stack).add(new AwsSolutionsChecks())
   })
 
