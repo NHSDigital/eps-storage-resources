@@ -18,8 +18,8 @@ export interface StorageResourcesStackProps extends StackProps{
  */
 
 export class StorageResourcesStack extends Stack {
-  public constructor(scope: App, id: string, props: StorageResourcesStackProps){
-    super(scope, id, props)
+  public constructor(scope: App, props: StorageResourcesStackProps){
+    super(scope, props.stackPrefix, props)
 
     // Context
     /* context values passed as --context cli arguments are passed as strings so coerce them to expected types*/

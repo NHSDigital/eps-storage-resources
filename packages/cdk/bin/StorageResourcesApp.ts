@@ -22,7 +22,7 @@ Tags.of(app).add("version", version)
 Tags.of(app).add("commit", commit)
 Tags.of(app).add("cdkApp", "StorageResourcesApp")
 
-new StorageResourcesStack(app, "StorageResourcesStack", {
+new StorageResourcesStack(app, {
   env: {
     region: "eu-west-2"
   },
