@@ -8,7 +8,10 @@ const app = new App()
   - logRetentionInDays
 */
 
-const serviceName = app.node.tryGetContext("serviceName")
+const serviceName = app.node.tryGetContext("SERVICE_NAME")
+const environment = app.node.tryGetContext("ENVIRONMENT")
+const stackPrefix = `nhse-${environment}-${serviceName}`
+
 const version = app.node.tryGetContext("VERSION_NUMBER")
 const commit = app.node.tryGetContext("COMMIT_ID")
 
@@ -19,10 +22,10 @@ Tags.of(app).add("version", version)
 Tags.of(app).add("commit", commit)
 Tags.of(app).add("cdkApp", "StorageResourcesApp")
 
-new StorageResourcesStack(app, "StorageResourcesStack", {
+new StorageResourcesStack(app, {
   env: {
     region: "eu-west-2"
   },
-  stackName: `${serviceName}`,
+  stackPrefix: stackPrefix,
   version: version
 })
