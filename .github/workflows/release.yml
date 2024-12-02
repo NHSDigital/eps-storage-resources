@@ -117,7 +117,7 @@ jobs:
     needs: [tag_release, package_code, get_commit_id]
     uses: ./.github/workflows/cdk_release_code.yml
     with:
-      SERVICE_NAME: spine-eps
+      SERVICE_NAME: eps-spine
       TARGET_ENVIRONMENT: dev
       VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
@@ -146,7 +146,7 @@ jobs:
     needs: [tag_release, package_code, get_commit_id, release_dev]
     uses: ./.github/workflows/cdk_release_code.yml
     with:
-      SERVICE_NAME: spine-eps
+      SERVICE_NAME: eps-spine
       TARGET_ENVIRONMENT: ref
       VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
@@ -160,7 +160,7 @@ jobs:
     needs: [tag_release, package_code, get_commit_id, release_dev]
     uses: ./.github/workflows/cdk_release_code.yml
     with:
-      SERVICE_NAME: spine-eps
+      SERVICE_NAME: eps-spine
       TARGET_ENVIRONMENT: qa
       VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
@@ -174,7 +174,7 @@ jobs:
     needs: [tag_release, package_code, get_commit_id, release_qa]
     uses: ./.github/workflows/cdk_release_code.yml
     with:
-      SERVICE_NAME: spine-eps
+      SERVICE_NAME: eps-spine
       TARGET_ENVIRONMENT: int
       VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
@@ -188,7 +188,7 @@ jobs:
   #   needs: [tag_release, package_code, get_commit_id, release_int]
   #   uses: ./.github/workflows/cdk_release_code.yml
   #   with:
-  #     SERVICE_NAME: spine-eps
+  #     SERVICE_NAME: eps-spine
   #     TARGET_ENVIRONMENT: prod
   #     VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
   #     COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}

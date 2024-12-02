@@ -17,7 +17,7 @@ import {Duration, RemovalPolicy} from "aws-cdk-lib"
 import {ATTRIBUTE_KEYS, AttributeNames} from "./attributes"
 
 export interface DynamodbProps {
-  readonly stackName: string
+  readonly stackPrefix: string
   readonly account: string
   readonly region: string
   readonly allowAutoDeleteObjects: boolean
@@ -41,8 +41,8 @@ export class Dynamodb extends Construct {
     const DatastoreKmsKey = new Key(this, "DatastoreKmsKey", {
       removalPolicy: RemovalPolicy.DESTROY,
       pendingWindow: Duration.days(7),
-      alias: `alias/${props.stackName}-DatastoreKmsKey`,
-      description: `${props.stackName}-DatastoreKmsKey`,
+      alias: `alias/${props.stackPrefix}-DatastoreKmsKey`,
+      description: `${props.stackPrefix}-DatastoreKmsKey`,
       enableKeyRotation: true
     })
 
@@ -68,7 +68,7 @@ export class Dynamodb extends Construct {
     const DatastoreTable = new TableV2(this, "DatastoreTable", {
       partitionKey: ATTRIBUTE_KEYS.PRIMARY_KEY,
       sortKey: ATTRIBUTE_KEYS.SORT_KEY,
-      tableName: `${props.stackName}-datastore`,
+      tableName: `${props.stackPrefix}-datastore`,
       removalPolicy: props.allowAutoDeleteObjects ? RemovalPolicy.DESTROY: RemovalPolicy.RETAIN,
       pointInTimeRecovery: true,
       encryption: TableEncryptionV2.customerManagedKey(DatastoreKmsKey),

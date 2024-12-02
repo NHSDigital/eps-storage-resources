@@ -9,7 +9,7 @@ import {nagSuppressions} from "../nagSuppressions"
 import {Dynamodb} from "../resources/Dynamodb"
 
 export interface StorageResourcesStackProps extends StackProps{
-  readonly stackName: string
+  readonly stackPrefix: string
   readonly version: string
 }
 
@@ -29,7 +29,7 @@ export class StorageResourcesStack extends Stack {
 
     // Resources
     const dynamodb = new Dynamodb(this, "DynamoDB", {
-      stackName: props.stackName,
+      stackPrefix: props.stackPrefix,
       account: this.account,
       region: this.region,
       allowAutoDeleteObjects: allowAutoDeleteObjects
@@ -40,23 +40,23 @@ export class StorageResourcesStack extends Stack {
     //Exports
     new CfnOutput(this, "tableWriteManagedPolicyArn", {
       value: dynamodb.tableWriteManagedPolicy.managedPolicyArn,
-      exportName: `${props.stackName}:tableWriteManagedPolicy:Arn`
+      exportName: `${props.stackPrefix}:tableWriteManagedPolicy:Arn`
     })
     new CfnOutput(this, "tableReadManagedPolicyArn", {
       value: dynamodb.tableReadManagedPolicy.managedPolicyArn,
-      exportName: `${props.stackName}:tableReadManagedPolicy:Arn`
+      exportName: `${props.stackPrefix}:tableReadManagedPolicy:Arn`
     })
     new CfnOutput(this, "usePrescriptionsTableKmsKeyPolicyArn", {
       value: dynamodb.usePrescriptionsTableKmsKeyPolicy.managedPolicyArn,
-      exportName: `${props.stackName}:usePrescriptionsTableKmsKeyPolicy:Arn`
+      exportName: `${props.stackPrefix}:usePrescriptionsTableKmsKeyPolicy:Arn`
     })
     new CfnOutput(this, "DatastoreTableArn", {
       value: dynamodb.DatastoreTable.tableArn,
-      exportName: `${props.stackName}:DatastoreTable:Arn`
+      exportName: `${props.stackPrefix}:DatastoreTable:Arn`
     })
     new CfnOutput(this, "DatastoreKmsKeyArn", {
       value: dynamodb.DatastoreKmsKey.keyArn,
-      exportName: `${props.stackName}:DatastoreKmsKey:Arn`
+      exportName: `${props.stackPrefix}:DatastoreKmsKey:Arn`
     })
     nagSuppressions(this)
   }
