@@ -7,10 +7,12 @@ import {
   TableV2
 } from "aws-cdk-lib/aws-dynamodb"
 import {
+  AccountPrincipal,
   AnyPrincipal,
   Effect,
   ManagedPolicy,
-  PolicyStatement
+  PolicyStatement,
+  Role
 } from "aws-cdk-lib/aws-iam"
 import {Key} from "aws-cdk-lib/aws-kms"
 import {Duration, RemovalPolicy} from "aws-cdk-lib"
@@ -34,6 +36,7 @@ export class Dynamodb extends Construct {
   public readonly tableWriteManagedPolicy: ManagedPolicy
   public readonly tableReadManagedPolicy: ManagedPolicy
   public readonly DatastoreKmsKey: Key
+  public readonly DatastoreTableRole: Role
 
   public constructor(scope: Construct, id: string, props: DynamodbProps) {
     super(scope, id)
@@ -185,6 +188,11 @@ export class Dynamodb extends Construct {
       projectionType: ProjectionType.KEYS_ONLY
     })
 
+    const DatastoreTableRole = new Role(this, "DatastoreTableRole", {
+      assumedBy: new AccountPrincipal(props.account)
+    })
+    DatastoreTable.grantReadWriteData(DatastoreTableRole)
+
     // policy to use kms key
     const usePrescriptionsTableKmsKeyPolicy = new ManagedPolicy(this, "UsePrescriptionsTableKMSKeyPolicy", {
       statements: [
@@ -245,6 +253,7 @@ export class Dynamodb extends Construct {
     // Outputs
     this.DatastoreTable = DatastoreTable
     this.DatastoreKmsKey = DatastoreKmsKey
+    this.DatastoreTableRole = DatastoreTableRole
     this.usePrescriptionsTableKmsKeyPolicy = usePrescriptionsTableKmsKeyPolicy
     this.tableWriteManagedPolicy = tableWriteManagedPolicy
     this.tableReadManagedPolicy = tableReadManagedPolicy
