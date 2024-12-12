@@ -13,7 +13,6 @@ Deployment history can be found at https://nhsdigital.github.io/eps-storage-reso
 This defines the storage infrastructure for EPS. It uses dynamodb (in place of Riak) as the datastore for the Spine EPS interaction.
 
 - `scripts/` Utilities helpful to developers.
-- `packages/cdk` Contains the CDK code used to define the stacks.
 - `.devcontainer` Contains a dockerfile and vscode devcontainer definition.
 - `.github` Contains github workflows that are used for building and deploying from pull requests and releases.
 - `.vscode` Contains vscode workspace file.
@@ -74,24 +73,6 @@ You can cache the gpg key passphrase by following instructions at https://superu
 
 It is intended that the DynamoDB table (and any other resources) created via the workflows defined in this repository are interacted with via the Spine codebase. There is a long-running feature branch in the Spine repo (`feature/eps-dynamodb-poc`) to hold our code changes. Follow the steps defined below on your Spine VM to allow connection to the DynamoDB table:
 
-#### Authenticate
-
-Navigate to the AWS SSO portal in your browser (and authenticate if necessary). Obtain the Access Keys for the NHS England EPS Development account and add them to a `/home/spineii-user/.aws/credentials` file as below:
-
-```
-[default]
-AWS_ACCESS_KEY_ID=<aws_access_key_id>
-AWS_SECRET_ACCESS_KEY=<aws_secret_access_key>
-AWS_SESSION_TOKEN=<aws_session_token>
-```
-
-These will remain active for a set period, so will need to be refreshed occasionally throughout the day. The services making use of the DynamoDB datastore will need to be restarted when the credentials are refreshed.
-
-You also need to add the following line to your `.vscode/.env` file:
-```
-AWS_SHARED_CREDENTIALS_FILE=/home/spineii-user/.aws/credentials
-```
-
 ### Pre-commit hooks
 
 Some pre-commit hooks are installed as part of the install above, to run basic lint checks and ensure you can't accidentally commit invalid changes.
@@ -107,14 +88,6 @@ There are `make` commands that are run as part of the CI pipeline and help alias
 - `install-python` Installs python dependencies.
 - `install-hooks` Installs git pre-commit hooks.
 - `install` Runs all install targets.
-
-#### CDK targets
-
-These are used to do common commands related to cdk
-
-- `cdk-synth` Converts the CDK code to cloudformation templates
-- `cdk-diff` Runs cdk diff comparing the deployed stack with local CDK code to see differences
-- `cdk-watch` Syncs the code and CDK templates to AWS. This keeps running and automatically uploads changes to AWS
 
 #### Clean and deep-clean targets
 
@@ -134,11 +107,6 @@ These are used to do common commands related to cdk
 
 - `check-licenses` Checks licenses for all python code.
 
-#### CLI Login to AWS
-
-- `aws-configure` Configures a connection to AWS.
-- `aws-login` Reconnects to AWS from a previously configured connection.
-
 ### Github folder
 
 This .github folder contains workflows and templates related to GitHub, along with actions and scripts pertaining to Jira.
@@ -151,18 +119,14 @@ Scripts are in the `.github/scripts` folder:
 - `call_mark_jira_released.sh` Calls a Lambda function to mark Jira issues as released.
 - `create_env_release_notes.sh` Generates release notes for a specific environment using a Lambda function.
 - `create_int_rc_release_notes.sh` Creates release notes for integration environment using a Lambda function.
-- `delete_stacks.sh` Checks and deletes active CloudFormation stacks associated with closed pull requests.
 - `get_current_dev_tag.sh` Retrieves the current development tag and sets it as an environment variable.
 - `get_target_deployed_tag.sh` Retrieves the currently deployed tag and sets it as an environment variable.
 
 Workflows are in the `.github/workflows` folder:
 
-- `cdk_package_code.yml` Packages code into a docker image and uploads to a github artifact for later deployment.
-- `cdk_release_code.yml` Release code built by cdk_package_code.yml to an environment.
 - `ci.yml` Workflow run when code merged to main. Deploys to dev and qa environments.
 - `combine_dependabot_prs.yml` Workflow for combining dependabot pull requests. Runs on demand.
 - `create_release_notes.yml` Workflow for creating release notes on confluence
-- `delete_old_cloudformation_stacks.yml` Workflow for deleting old cloud formation stacks. Runs daily.
 - `dependabot_auto_approve_and_merge.yml` Workflow to auto merge dependabot updates.
 - `pr_title_check.yaml` Checks title of pull request is valid.
 - `pull_request.yml` Called when pull request is opened or updated. Calls package_code and release_code to build and deploy the code. Deploys to dev AWS account. The main stack deployed adopts the naming convention storage-resources-pr-<PULL_REQUEST_ID>

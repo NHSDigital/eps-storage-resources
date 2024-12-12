@@ -23,12 +23,9 @@ USER vscode
 # Install ASDF
 RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.11.3; \
     echo '. $HOME/.asdf/asdf.sh' >> ~/.bashrc; \
-    echo '. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc; \
-    echo '# Install Ruby Gems to ~/gems' >> ~/.bashrc; \
-    echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc; \
-    echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc;
+    echo '. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc;
 
-ENV PATH="$PATH:/home/vscode/.asdf/bin/:/workspaces/eps-prescription-tracker-ui/node_modules/.bin"
+ENV PATH="$PATH:/home/vscode/.asdf/bin/:/workspaces/storage-resources/node_modules/.bin"
 
 
 # Install ASDF plugins
@@ -37,12 +34,10 @@ RUN asdf plugin add python; \
     asdf plugin add shellcheck https://github.com/luizm/asdf-shellcheck.git; \
     asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git; \
     asdf plugin add direnv; \
-    asdf plugin add actionlint; \
-    asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+    asdf plugin add actionlint;
 
 
-WORKDIR /workspaces/eps-prescription-tracker-ui
-ADD .tool-versions /workspaces/eps-prescription-tracker-ui/.tool-versions
+WORKDIR /workspaces/storage-resources
 ADD .tool-versions /home/vscode/.tool-versions
 
 RUN asdf install; \
