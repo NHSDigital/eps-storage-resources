@@ -41,7 +41,8 @@
         "streetsidesoftware.code-spell-checker",
         "timonwong.shellcheck",
         "mkhl.direnv",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        "HashiCorp.terraform"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/workspaces/storage-resources/.venv/bin/python",
