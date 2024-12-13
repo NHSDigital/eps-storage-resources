@@ -77,7 +77,7 @@ It is intended that the DynamoDB table (and any other resources) created via the
 
 A new AWS account will need to be created and bootstrapped. This is a manual process and will need to be done by a member of the team with the necessary permissions. The process is as follows:
 
-1. From the project root, run `make aws-configure` to configure the AWS CLI. Note the profile name created here. You'll need it later.
+1. From the project root, run `make aws-configure` to configure the AWS CLI. Note the profile name created here. You'll need it later. (Make sure to set region as `eu-west-2`)
 2. From the project root, run `make aws-login` to log into the AWS account.
 3. Navigate to `packages/terraform/account-bootstrap`.
 4. Run `env=<env> profile=<profile>  make tf-init` where `<env>` is the environment you are bootstrapping (e.g. `dev`, `qa`, `prod`) and `<profile>` is the profile name you noted earlier.
