@@ -40,7 +40,7 @@ jobs:
         uses: asdf-vm/actions/setup@05e0d2ed97b598bfce82fd30daf324ae0c4570e6
         with:
           asdf_branch: v0.14.1
-  
+
       - name: Cache asdf
         uses: actions/cache@v4
         with:
@@ -87,29 +87,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-  package_code:
-    needs: [tag_release, get_commit_id]
-    uses: ./.github/workflows/cdk_package_code.yml
-    with:
-      VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
-      COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
+  # package_code:
+  #   needs: [get_issue_number, get_commit_id, quality_checks]
 
-  release_dev:
-    needs: [tag_release, package_code, get_commit_id]
-    uses: ./.github/workflows/cdk_release_code.yml
-    with:
-      SERVICE_NAME: storage-resources
-      TARGET_ENVIRONMENT: dev
-      VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
-      COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
-      CDK_APP_NAME: StorageResourcesApp
-      ALLOW_AUTO_DELETE_OBJECTS: false
-    secrets:
-      CDK_PULL_IMAGE_ROLE: ${{ secrets.DEV_CDK_PULL_IMAGE_ROLE }}
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.DEV_CLOUD_FORMATION_DEPLOY_ROLE }}
+  # release_dev:
+  #   needs: [get_issue_number, package_code, get_commit_id, quality_checks]
 
   create_release_notes:
-    needs: [tag_release, package_code, get_commit_id, release_dev]
+    needs: [tag_release, get_commit_id,
+    # package_code,
+    # release_dev
+    ]
     uses: ./.github/workflows/create_release_notes.yml
     with:
       VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
@@ -123,17 +111,5 @@ jobs:
       INT_CLOUD_FORMATION_CHECK_VERSION_ROLE: ${{ secrets.INT_CLOUD_FORMATION_CHECK_VERSION_ROLE }}
       PROD_CLOUD_FORMATION_CHECK_VERSION_ROLE: ${{ secrets.PROD_CLOUD_FORMATION_CHECK_VERSION_ROLE }}
 
-
-  release_qa:
-    needs: [tag_release, release_dev, package_code, get_commit_id]
-    uses: ./.github/workflows/cdk_release_code.yml
-    with:
-      SERVICE_NAME: storage-resources
-      TARGET_ENVIRONMENT: qa
-      VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
-      COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
-      CDK_APP_NAME: StorageResourcesApp
-      ALLOW_AUTO_DELETE_OBJECTS: false
-    secrets:
-      CDK_PULL_IMAGE_ROLE: ${{ secrets.QA_CDK_PULL_IMAGE_ROLE }}
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.QA_CLOUD_FORMATION_DEPLOY_ROLE }}
+  # release_qa:
+    # needs: [tag_release, release_dev, package_code, get_commit_id]

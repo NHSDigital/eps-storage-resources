@@ -41,10 +41,11 @@
         "streetsidesoftware.code-spell-checker",
         "timonwong.shellcheck",
         "mkhl.direnv",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        "HashiCorp.terraform"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/workspaces/eps-prescription-tracker-ui/.venv/bin/python",
+        "python.defaultInterpreterPath": "/workspaces/storage-resources/.venv/bin/python",
         "python.analysis.autoSearchPaths": true,
         "python.analysis.extraPaths": [],
         "python.testing.unittestEnabled": false,
@@ -62,7 +63,7 @@
       }
     }
   },
-  "postCreateCommand": "rm -f ~/.docker/config.json; git config --global --add safe.directory /workspaces/eps-storage-resources; make install; direnv allow ."
+  "postCreateCommand": "rm -f ~/.docker/config.json; git config --global --add safe.directory /workspaces/eps-storage-resources; make install; touch .envrc; direnv allow ."
   // "features": {},
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],

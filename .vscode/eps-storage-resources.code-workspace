@@ -1,12 +1,12 @@
 {
   "folders": [
     {
-    "name": "eps-storage-resources-monorepo",
-    "path": ".."
+      "name": "eps-storage-resources-monorepo",
+      "path": ".."
     },
     {
-      "name": "packages/cdk",
-      "path": "../packages/cdk"
+      "name": "terraform",
+      "path": "../packages/terraform"
     }
   ],
   "settings": {
@@ -90,8 +90,14 @@
       "versionable",
       "whens"
     ],
-    "cSpell.dictionaries": ["en-GB"],
-    "cSpell.ignorePaths": ["package-lock.json", "node_modules", ".vscode"],
+    "cSpell.dictionaries": [
+      "en-GB"
+    ],
+    "cSpell.ignorePaths": [
+      "package-lock.json",
+      "node_modules",
+      ".vscode"
+    ],
     "jest.jestCommandLine": "NODE_OPTIONS=--experimental-vm-modules node_modules/.bin/jest --no-cache",
     "jest.nodeEnv": {
       "POWERTOOLS_DEV": true
@@ -102,7 +108,6 @@
   },
   "extensions": {
     "recommendations": [
-      "AmazonWebServices.aws-toolkit-vscode",
       "redhat.vscode-yaml",
       "ms-python.python",
       "ms-python.flake8",
