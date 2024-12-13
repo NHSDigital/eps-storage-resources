@@ -3,6 +3,10 @@
     {
       "name": "eps-storage-resources-monorepo",
       "path": ".."
+    },
+    {
+      "name": "terraform",
+      "path": "../packages/terraform"
     }
   ],
   "settings": {

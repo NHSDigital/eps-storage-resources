@@ -4,3 +4,4 @@ poetry 1.8.3
 shellcheck 0.10.0
 direnv 2.32.2
 actionlint 1.7.3
+terraform 1.10.2

@@ -34,7 +34,8 @@ RUN asdf plugin add python; \
     asdf plugin add shellcheck https://github.com/luizm/asdf-shellcheck.git; \
     asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git; \
     asdf plugin add direnv; \
-    asdf plugin add actionlint;
+    asdf plugin add actionlint; \
+    asdf plugin add  terraform https://github.com/asdf-community/asdf-hashicorp.git;
 
 
 WORKDIR /workspaces/storage-resources
@@ -44,4 +45,5 @@ RUN asdf install; \
     asdf reshim python; \
     asdf reshim poetry; \
     asdf reshim nodejs; \
+    asdf reshim terraform; \
     asdf direnv setup --shell bash --version 2.32.2;
