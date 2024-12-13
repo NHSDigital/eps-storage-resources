@@ -25,6 +25,12 @@ lint-githubaction-scripts:
 
 lint: lint-githubactions lint-githubaction-scripts tf-lint
 
+aws-configure:
+	aws configure sso --region eu-west-2
+
+aws-login:
+	aws sso login --sso-session sso-session
+
 tf-fmt:
 	cd packages/terraform && terraform fmt -recursive
 
