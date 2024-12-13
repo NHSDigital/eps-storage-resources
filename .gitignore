@@ -18,7 +18,6 @@ junit.xml
 release_notes
 /ecs-*.yml
 .venv
-.aws-sam
 lib/
 *.tsbuildinfo
 _site/
@@ -27,4 +26,4 @@ _site/
 .jekyll-metadata
 vendor
 .asdf
-cdk.out/
+**/.terraform
