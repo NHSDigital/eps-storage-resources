@@ -23,7 +23,21 @@ lint-githubactions:
 lint-githubaction-scripts:
 	shellcheck .github/scripts/*.sh
 
-lint: lint-githubactions lint-githubaction-scripts
+lint: lint-githubactions lint-githubaction-scripts tf-lint
+
+tf-fmt:
+	cd packages/terraform && terraform fmt -recursive
+
+tf-fmt-check:
+	cd packages/terraform && terraform fmt -check -recursive
+
+tf-lint:
+	docker run --rm -v $(shell pwd)/packages/terraform:/data -t ghcr.io/terraform-linters/tflint --recursive
+
+tf-scan:
+# Insert checkov or trivy here
+
+tf-quality-checks: tf-fmt-check tf-lint tf-scan
 
 test:
 

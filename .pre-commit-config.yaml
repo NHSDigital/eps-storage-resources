@@ -41,5 +41,12 @@ repos:
         types_or: [sh, shell]
         pass_filenames: false
 
+      - id: check-terraform
+        name: Check terraform configuration
+        entry: make
+        args: ["tf-quality-checks"]
+        language: system
+        files: ^packages/terraform
+
 fail_fast: true
 default_stages: [pre-commit]

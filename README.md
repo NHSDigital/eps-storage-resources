@@ -100,12 +100,19 @@ There are `make` commands that are run as part of the CI pipeline and help alias
 - `lint-github-actions` Runs lint for github actions workflows.
 - `lint-github-action-scripts` Runs shellcheck for github actions scripts.
 - `lint-python` Runs lint for python code.
-- `lint-sam-templates` Runs lint for SAM templates.
 - `test` Runs unit tests for all code.
 
 #### Check licenses
 
 - `check-licenses` Checks licenses for all python code.
+
+#### Terraform targets
+
+- `tf-fmt` Formats terraform code.
+- `tf-fmt-check` Checks terraform code formatting.
+- `tf-lint` Lints terraform code.
+- `tf-scan` Performs static analysis on terraform code.
+- `tf-quality-checks` Runs `tf-fmt-check`, `tf-lint` and `tf-scan` targets for use in pre-commit hooks and CI.
 
 ### Github folder
 
