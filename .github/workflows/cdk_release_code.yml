@@ -88,12 +88,14 @@ jobs:
       - name: fix cdk.json for deployment
         run: |
           jq \
-          --arg serviceName "${{ inputs.SERVICE_NAME }}" \
+          --arg SERVICE_NAME "${{ inputs.SERVICE_NAME }}" \
+          --arg ENVIRONMENT "${{ inputs.TARGET_ENVIRONMENT }}" \
           --arg VERSION_NUMBER "${{ inputs.VERSION_NUMBER }}" \
           --arg COMMIT_ID "${{ inputs.COMMIT_ID }}" \
           --argjson allowAutoDeleteObjects "${{ inputs.ALLOW_AUTO_DELETE_OBJECTS }}" \
           '.context += {
-            "serviceName": $serviceName,
+            "SERVICE_NAME": $SERVICE_NAME,
+            "ENVIRONMENT": $ENVIRONMENT,
             "VERSION_NUMBER": $VERSION_NUMBER,
             "COMMIT_ID": $COMMIT_ID,
             "allowAutoDeleteObjects": $allowAutoDeleteObjects
